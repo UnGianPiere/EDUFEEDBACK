@@ -3,34 +3,43 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { MessageSquare, Users, BookOpen } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import ComentarioCard from "../components/comentarios/ComentarioCard"
 
 const Home = () => {
   const [stats, setStats] = useState({
     profesores: 0,
     comentarios: 0,
-    cursos: 0,
+    cursos: 0
   })
   const [profesoresDestacados, setProfesoresDestacados] = useState([])
   const [comentariosRecientes, setComentariosRecientes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
+        setError(null)
+        
         const [statsRes, profesoresRes, comentariosRes] = await Promise.all([
-          axios.get("/api/stats"),
-          axios.get("/api/profesores/destacados"),
-          axios.get("/api/comentarios/recientes"),
+          axiosInstance.get("/api/stats"),
+          axiosInstance.get("/api/profesores/destacados"),
+          axiosInstance.get("/api/comentarios/recientes"),
         ])
 
-        setStats(statsRes.data)
-        setProfesoresDestacados(profesoresRes.data)
-        setComentariosRecientes(comentariosRes.data)
-        setLoading(false)
+        setStats(statsRes.data || { profesores: 0, comentarios: 0, cursos: 0 })
+        setProfesoresDestacados(Array.isArray(profesoresRes.data) ? profesoresRes.data : [])
+        setComentariosRecientes(Array.isArray(comentariosRes.data) ? comentariosRes.data : [])
       } catch (error) {
         console.error("Error fetching data:", error)
+        setError("Error al cargar los datos")
+        // Establecer valores por defecto en caso de error
+        setStats({ profesores: 0, comentarios: 0, cursos: 0 })
+        setProfesoresDestacados([])
+        setComentariosRecientes([])
+      } finally {
         setLoading(false)
       }
     }
@@ -40,6 +49,10 @@ const Home = () => {
 
   if (loading) {
     return <div className="text-center py-10">Cargando...</div>
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-600">{error}</div>
   }
 
   return (
