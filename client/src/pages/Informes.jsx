@@ -137,7 +137,7 @@ const Informes = () => {
   const fetchEstadisticas = async () => {
     try {
       setLoading(true)
-      const res = await axios.get("/api/informes/estadisticas")
+      const res = await axiosInstance.get("/api/informes/estadisticas")
       setStats(res.data)
       setLoading(false)
     } catch (error) {
@@ -231,7 +231,7 @@ const Informes = () => {
     }
 
     try {
-      await axios.delete(`/api/informes/comentarios/${id}`)
+      await axiosInstance.delete(`/api/informes/comentarios/${id}`)
       toast.success("Comentario eliminado correctamente")
       fetchComentarios()
       // Actualizar estadísticas
@@ -244,7 +244,7 @@ const Informes = () => {
 
   const handleChangeUserRole = async (userId, newRole) => {
     try {
-      await axios.put(`/api/informes/usuarios/${userId}/rol`, { rol: newRole })
+      await axiosInstance.put(`/api/informes/usuarios/${userId}/rol`, { rol: newRole })
       toast.success("Rol de usuario actualizado correctamente")
       fetchUsuarios()
     } catch (error) {

@@ -80,7 +80,7 @@ const Login = () => {
 
   const handleReenviarCodigo = async () => {
     try {
-      await axios.post("/api/auth/reenviar-codigo", {
+      await axiosInstance.post("/api/auth/reenviar-codigo", {
         correo: formData.correo,
       })
       toast.success("Se ha enviado un nuevo código a tu correo")

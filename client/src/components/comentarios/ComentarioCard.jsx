@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ThumbsUp, MessageCircle, Flag, Star, BookOpen, Calendar, Clock, Tag, Award } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../../utils/axiosConfig"
 
 const ComentarioCard = ({ comentario, onReply, onDelete, currentUser }) => {
   const [showReplyForm, setShowReplyForm] = useState(false)
@@ -43,7 +43,7 @@ const ComentarioCard = ({ comentario, onReply, onDelete, currentUser }) => {
   const handleLike = async () => {
     if (hasLiked) return
     try {
-      await axios.post(`/api/comentarios/${comentario._id}/like`)
+      await axiosInstance.post(`/api/comentarios/${comentario._id}/like`)
       setLikes(likes + 1)
       setHasLiked(true)
     } catch (error) {

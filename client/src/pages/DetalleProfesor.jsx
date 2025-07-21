@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Mail, BookOpen, Star, MessageSquare } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import ComentarioCard from "../components/comentarios/ComentarioCard"
 
 const DetalleProfesor = () => {
@@ -14,7 +14,7 @@ const DetalleProfesor = () => {
   useEffect(() => {
     const fetchProfesor = async () => {
       try {
-        const res = await axios.get(`/api/profesores/${id}`)
+        const res = await axiosInstance.get(`/api/profesores/${id}`)
         setData(res.data)
         setLoading(false)
       } catch (error) {

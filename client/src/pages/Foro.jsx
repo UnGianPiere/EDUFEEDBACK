@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Search, Filter } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import ComentarioCard from "../components/comentarios/ComentarioCard"
 
 const Foro = () => {
@@ -19,9 +19,9 @@ const Foro = () => {
     const fetchData = async () => {
       try {
         const [comentariosRes, profesoresRes, temasRes] = await Promise.all([
-          axios.get("/api/comentarios"),
-          axios.get("/api/profesores/populares"),
-          axios.get("/api/comentarios/temas-destacados"), // Cambiar de "/api/comentarios/temas" a "/api/comentarios/temas-destacados"
+          axiosInstance.get("/api/comentarios"),
+          axiosInstance.get("/api/profesores/populares"),
+          axiosInstance.get("/api/comentarios/temas-destacados"), // Cambiar de "/api/comentarios/temas" a "/api/comentarios/temas-destacados"
         ])
 
         setComentarios(comentariosRes.data || [])
@@ -31,6 +31,10 @@ const Foro = () => {
         setLoading(false)
       } catch (error) {
         console.error("Error fetching data:", error)
+        setComentarios([])
+        setFilteredComentarios([])
+        setProfesoresPopulares([])
+        setTemasDestacados([])
         setLoading(false)
       }
     }
@@ -84,7 +88,7 @@ const Foro = () => {
   // Función para responder
   const handleReply = async (texto, parentId) => {
     try {
-      await axios.post("/api/comentarios", {
+      await axiosInstance.post("/api/comentarios", {
         texto,
         parentId,
         idProfesor: comentarios.find((c) => c._id === parentId)?.idProfesor,
@@ -94,7 +98,7 @@ const Foro = () => {
         calificacion: 3,
       })
       // Refrescar comentarios
-      const comentariosRes = await axios.get("/api/comentarios")
+      const comentariosRes = await axiosInstance.get("/api/comentarios")
       setComentarios(comentariosRes.data)
     } catch (error) {
       console.error("Error al responder comentario:", error)

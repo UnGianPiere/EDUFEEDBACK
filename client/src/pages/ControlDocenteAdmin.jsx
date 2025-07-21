@@ -2,7 +2,7 @@
 
 import { AuthContext } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import toast from "react-hot-toast"
 import { llmService } from "../utils/llmService"
 import {
@@ -571,7 +571,7 @@ const ControlDocenteAdmin = () => {
   const fetchDocentes = async () => {
     try {
       setLoading(true)
-      const res = await axios.get("/api/profesores")
+      const res = await axiosInstance.get("/api/profesores")
       setDocentes(res.data)
       setLoading(false)
     } catch (error) {
@@ -583,7 +583,7 @@ const ControlDocenteAdmin = () => {
   const fetchDocenteInfo = async (docenteId) => {
     try {
       setLoading(true)
-      const res = await axios.get(`/api/profesores/${docenteId}`)
+      const res = await axiosInstance.get(`/api/profesores/${docenteId}`)
       setDocenteInfo(res.data)
       setComentarios(res.data.comentarios)
       calcularStats(res.data.comentarios)
