@@ -3,7 +3,7 @@
 import { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { AlertCircle, BookOpen, Star } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import toast from "react-hot-toast"
 import { AuthContext } from "../context/AuthContext"
 
@@ -72,7 +72,7 @@ const PublicarComentario = () => {
 
         // Si hay un profesorId, obtener datos del profesor
         if (profesorId) {
-          const profesorRes = await axios.get(`/api/profesores/${profesorId}`)
+          const profesorRes = await axiosInstance.get(`/api/profesores/${profesorId}`)
           setProfesor(profesorRes.data.profesor)
 
           // Obtener cursos del profesor
@@ -88,8 +88,8 @@ const PublicarComentario = () => {
         } else {
           // Si no hay profesorId, obtener todos los profesores y cursos
           const [profesoresRes, cursosRes] = await Promise.all([
-            axios.get("/api/profesores"),
-            axios.get("/api/departamentos/cursos/todos"),
+            axiosInstance.get("/api/profesores"),
+            axiosInstance.get("/api/departamentos/cursos/todos"),
           ])
           setProfesores(profesoresRes.data)
           setCursos(cursosRes.data)
@@ -113,8 +113,8 @@ const PublicarComentario = () => {
     if (name === "idProfesor" && !profesorId) {
       const fetchProfesorCursos = async () => {
         try {
-          const profesorRes = await axios.get(`/api/profesores/${value}`)
-          const cursosRes = await axios.get("/api/departamentos/cursos/todos")
+          const profesorRes = await axiosInstance.get(`/api/profesores/${value}`)
+          const cursosRes = await axiosInstance.get("/api/departamentos/cursos/todos")
 
           const cursosFiltrados = cursosRes.data.filter((curso) =>
             profesorRes.data.profesor.cursos.some((cursoProfesor) =>
@@ -157,7 +157,7 @@ const PublicarComentario = () => {
         idEstudiante: user.id,
       }
 
-      await axios.post("/api/comentarios", comentarioData)
+      await axiosInstance.post("/api/comentarios", comentarioData)
       toast.success("Comentario publicado con éxito")
       navigate(`/profesores/${formData.idProfesor}`)
     } catch (error) {

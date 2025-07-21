@@ -18,7 +18,7 @@ import {
     GraduationCap,
     RefreshCw,
 } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import toast from "react-hot-toast"
 
 const PanelAdmin = () => {
@@ -116,7 +116,7 @@ const PanelAdmin = () => {
     // Fetch cursos al abrir modal de profesor
     useEffect(() => {
         if (showProfesorModal) {
-            axios
+            axiosInstance
                 .get("/api/cursos")
                 .then((res) => setCursos(res.data))
                 .catch(() => setCursos([]))
@@ -139,7 +139,7 @@ const PanelAdmin = () => {
     const fetchEstadisticas = async () => {
         try {
             setLoading(true)
-            const res = await axios.get("/api/informes/estadisticas")
+            const res = await axiosInstance.get("/api/informes/estadisticas")
             setStats(res.data)
             setLoading(false)
         } catch (error) {
@@ -152,7 +152,7 @@ const PanelAdmin = () => {
     const fetchUsuarios = async () => {
         try {
             setLoading(true)
-            const res = await axios.get(
+            const res = await axiosInstance.get(
                 `/api/informes/usuarios?page=${pagination.page}&limit=${pagination.limit}&search=${search}`,
             )
             setUsuarios(res.data.usuarios)
@@ -168,7 +168,7 @@ const PanelAdmin = () => {
     const fetchComentarios = async () => {
         try {
             setLoading(true)
-            const res = await axios.get(
+            const res = await axiosInstance.get(
                 `/api/informes/comentarios?page=${pagination.page}&limit=${pagination.limit}&search=${search}&sentimiento=${sentimientoFilter}`,
             )
             setComentarios(res.data.comentarios)
@@ -184,7 +184,7 @@ const PanelAdmin = () => {
     const fetchProfesores = async () => {
         try {
             setLoading(true)
-            const res = await axios.get(
+            const res = await axiosInstance.get(
                 `/api/informes/profesores?page=${pagination.page}&limit=${pagination.limit}&search=${search}&departamento=${departamentoFilter}`,
             )
             setProfesores(res.data.profesores)
@@ -199,7 +199,7 @@ const PanelAdmin = () => {
 
     const fetchDepartamentos = async () => {
         try {
-            const res = await axios.get("/api/informes/departamentos")
+            const res = await axiosInstance.get("/api/informes/departamentos")
             setDepartamentos(res.data)
         } catch (error) {
             console.error("Error al cargar departamentos:", error)
@@ -210,7 +210,7 @@ const PanelAdmin = () => {
     const fetchAnalisisProfesor = async (profesorId) => {
         try {
             setLoadingAnalisis(true)
-            const res = await axios.get(`/api/informes/analisis-profesor/${profesorId}`)
+            const res = await axiosInstance.get(`/api/informes/analisis-profesor/${profesorId}`)
             setAnalisisData(res.data)
             setLoadingAnalisis(false)
         } catch (error) {
@@ -289,7 +289,7 @@ const PanelAdmin = () => {
         }
 
         try {
-            await axios.delete(`/api/informes/comentarios/${id}`)
+            await axiosInstance.delete(`/api/informes/comentarios/${id}`)
             toast.success("Comentario eliminado correctamente")
             fetchComentarios()
             // Actualizar estadísticas
@@ -302,7 +302,7 @@ const PanelAdmin = () => {
 
     const handleChangeUserRole = async (userId, newRole) => {
         try {
-            await axios.put(`/api/informes/usuarios/${userId}/rol`, { rol: newRole })
+            await axiosInstance.put(`/api/informes/usuarios/${userId}/rol`, { rol: newRole })
             toast.success("Rol de usuario actualizado correctamente")
             fetchUsuarios()
         } catch (error) {
@@ -321,7 +321,7 @@ const PanelAdmin = () => {
         }
 
         try {
-            await axios.delete(`/api/profesores/${id}`)
+            await axiosInstance.delete(`/api/profesores/${id}`)
             toast.success("Profesor eliminado correctamente")
             fetchProfesores()
             fetchEstadisticas()
@@ -337,11 +337,11 @@ const PanelAdmin = () => {
         try {
             if (selectedProfesor) {
                 // Actualizar profesor existente
-                await axios.put(`/api/profesores/${selectedProfesor._id}`, profesorForm)
+                await axiosInstance.put(`/api/profesores/${selectedProfesor._id}`, profesorForm)
                 toast.success("Profesor actualizado correctamente")
             } else {
                 // Crear nuevo profesor
-                await axios.post("/api/profesores", profesorForm)
+                await axiosInstance.post("/api/profesores", profesorForm)
                 toast.success("Profesor creado correctamente")
             }
 

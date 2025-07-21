@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
 import { Mail, Lock, User, BookOpen, Calendar, UserPlus } from "lucide-react"
 import toast from "react-hot-toast"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +52,7 @@ const Register = () => {
     setLoading(true)
 
     try {
-      const response = await axios.post("/api/auth/register", {
+      const response = await axiosInstance.post("/api/auth/register", {
         nombreUsuario: formData.nombreUsuario,
         correo: formData.correo,
         contrasena: formData.contrasena,
@@ -89,7 +89,7 @@ const Register = () => {
 
   const handleReenviarCodigo = async () => {
     try {
-      await axios.post("/api/auth/reenviar-codigo", {
+      await axiosInstance.post("/api/auth/reenviar-codigo", {
         correo: formData.correo,
       })
       toast.success("Se ha enviado un nuevo código a tu correo")

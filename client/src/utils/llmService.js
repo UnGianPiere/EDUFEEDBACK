@@ -1,11 +1,11 @@
-import axios from "axios"
+import axiosInstance from "./axiosConfig"
 
 // Servicio para interactuar con la API LLM y BD
 export const llmService = {
   // Obtener análisis LLM guardado de la BD
   async obtenerAnalisisGuardado(profesorId) {
     try {
-      const response = await axios.get(`/api/analisis/llm/${profesorId}`)
+      const response = await axiosInstance.get(`/api/analisis/llm/${profesorId}`)
       return response.data.analisisLLM
     } catch (error) {
       if (error.response?.status === 404) {
@@ -28,7 +28,7 @@ export const llmService = {
         comentariosAnalizados,
       }
 
-      const response = await axios.post(`/api/analisis/llm/${profesorId}`, payload)
+      const response = await axiosInstance.post(`/api/analisis/llm/${profesorId}`, payload)
       return response.data
     } catch (error) {
       console.error("Error al guardar análisis LLM:", error)
@@ -40,7 +40,7 @@ export const llmService = {
   // Eliminar análisis LLM de la BD
   async eliminarAnalisis(profesorId) {
     try {
-      const response = await axios.delete(`/api/analisis/llm/${profesorId}`)
+      const response = await axiosInstance.delete(`/api/analisis/llm/${profesorId}`)
       return response.data
     } catch (error) {
       console.error("Error al eliminar análisis LLM:", error)
@@ -71,7 +71,7 @@ export const llmService = {
 
       console.log(`Analizando ${comentarios.length} comentarios con IA...`)
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${llmApiUrl}/evaluar-docente`,
         {
           comentarios: comentariosTexto,

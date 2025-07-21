@@ -2,16 +2,16 @@ import axios from "axios"
 import toast from "react-hot-toast"
 
 // Crear instancia de axios con URL base
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
-  timeout: 10000,
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 })
 
 // Interceptor para añadir token de autenticación
-api.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token")
     if (token) {
@@ -25,7 +25,7 @@ api.interceptors.request.use(
 )
 
 // Interceptor para manejar errores
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => {
     return response
   },
@@ -56,4 +56,4 @@ api.interceptors.response.use(
   },
 )
 
-export default api
+export default axiosInstance

@@ -4,7 +4,7 @@ import { useState, useEffect, useContext, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
 import { User, BookOpen, Calendar, Lock, Edit, Save, X, Star, MessageSquare, Upload, Trash2 } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import toast from "react-hot-toast"
 
 const Perfil = () => {
@@ -42,7 +42,7 @@ const Perfil = () => {
         setLoading(true)
 
         // Obtener datos del usuario
-        const userRes = await axios.get("/api/perfil")
+        const userRes = await axiosInstance.get("/api/perfil")
 
         setFormData({
           nombreUsuario: userRes.data.nombreUsuario || "",
@@ -51,11 +51,11 @@ const Perfil = () => {
         })
 
         // Obtener estadísticas
-        const statsRes = await axios.get("/api/perfil/estadisticas")
+        const statsRes = await axiosInstance.get("/api/perfil/estadisticas")
         setEstadisticas(statsRes.data)
 
         // Obtener comentarios recientes
-        const comentariosRes = await axios.get("/api/perfil/comentarios")
+        const comentariosRes = await axiosInstance.get("/api/perfil/comentarios")
         setComentariosRecientes(comentariosRes.data)
 
         setLoading(false)
@@ -106,7 +106,7 @@ const Perfil = () => {
     }
 
     try {
-      await axios.post("/api/perfil/cambiar-contrasena", {
+      await axiosInstance.post("/api/perfil/cambiar-contrasena", {
         contrasenaActual: passwordData.contrasenaActual,
         nuevaContrasena: passwordData.nuevaContrasena,
       })

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Search } from "lucide-react"
-import axios from "axios"
+import axiosInstance from "../utils/axiosConfig"
 import ProfesorCard from "../components/profesores/ProfesorCard"
 
 const Profesores = () => {
@@ -14,7 +14,7 @@ const Profesores = () => {
   useEffect(() => {
     const fetchProfesores = async () => {
       try {
-        const res = await axios.get("/api/profesores")
+        const res = await axiosInstance.get("/api/profesores")
         setProfesores(res.data)
         setFilteredProfesores(res.data)
         setLoading(false)
