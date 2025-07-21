@@ -5,6 +5,7 @@ const Comentario = require("../models/Comentario")
 const AnalisisProfesor = require("../models/AnalisisProfesor")
 const auth = require("../middleware/auth")
 const admin = require("../middleware/admin")
+const analisisController = require("../controllers/analisisController")
 
 // Obtener todos los trabajos de análisis (solo admin)
 router.get("/trabajos", [auth, admin], async (req, res) => {
@@ -18,36 +19,10 @@ router.get("/trabajos", [auth, admin], async (req, res) => {
 })
 
 // Obtener análisis de un profesor
-router.get("/profesor/:id", async (req, res) => {
-  try {
-    const analisis = await AnalisisProfesor.findOne({ idProfesor: req.params.id })
-
-    if (!analisis) {
-      return res.status(404).json({ message: "Análisis no encontrado" })
-    }
-
-    res.json(analisis)
-  } catch (error) {
-    console.error("Error al obtener análisis del profesor:", error)
-    res.status(500).json({ message: "Error al obtener análisis del profesor" })
-  }
-})
+router.get("/profesor/:id", analisisController.obtenerAnalisisProfesor)
 
 // Solicitar nuevo análisis para un profesor (solo admin)
-router.post("/profesor/:id", [auth, admin], async (req, res) => {
-  try {
-    const nuevoTrabajo = new TrabajoAnalisis({
-      tipo: "profesor",
-      idObjetivo: req.params.id,
-    })
-
-    await nuevoTrabajo.save()
-    res.status(201).json({ message: "Análisis solicitado correctamente", trabajo: nuevoTrabajo })
-  } catch (error) {
-    console.error("Error al solicitar análisis:", error)
-    res.status(500).json({ message: "Error al solicitar análisis" })
-  }
-})
+router.post("/generar/:id", [auth, admin], analisisController.generarAnalisis)
 
 // Procesar un trabajo de análisis pendiente (simulado)
 router.post("/procesar/:id", [auth, admin], async (req, res) => {
@@ -113,5 +88,10 @@ router.post("/procesar/:id", [auth, admin], async (req, res) => {
     res.status(500).json({ message: "Error al procesar trabajo" })
   }
 })
+
+// NUEVAS RUTAS PARA LLM
+router.get("/llm/:profesorId", analisisController.obtenerAnalisisLLM)
+router.post("/llm/:profesorId", [auth, admin], analisisController.guardarAnalisisLLM)
+router.delete("/llm/:profesorId", [auth, admin], analisisController.eliminarAnalisisLLM)
 
 module.exports = router

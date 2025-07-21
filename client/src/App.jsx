@@ -15,7 +15,8 @@ import PublicarComentario from "./pages/PublicarComentario"
 import Perfil from "./pages/Perfil"
 import { AuthProvider, AuthContext } from "./context/AuthContext"
 // Importar la página de Informes
-import Informes from "./pages/Informes"
+import PanelAdmin from "./pages/PanelAdmin"
+import ControlDocenteAdmin from "./pages/ControlDocenteAdmin"
 
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }) => {
@@ -58,10 +59,18 @@ function AppContent() {
             }
           />
           <Route
-            path="/informes"
+            path="/panel-admin"
             element={
               <ProtectedRoute>
-                <Informes />
+                <PanelAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/control-docente-admin"
+            element={
+              <ProtectedRoute>
+                <ControlDocenteAdmin />
               </ProtectedRoute>
             }
           />

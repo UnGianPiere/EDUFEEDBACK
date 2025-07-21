@@ -48,18 +48,54 @@ const analisisProfesorSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  analisisPalabrasClave: [
-    {
-      palabra: String,
-      frecuencia: Number,
+  // NUEVOS CAMPOS ESPECÍFICOS PARA LLM
+  analisisLLM: {
+    resumenEjecutivo: {
+      type: String,
+      default: "",
     },
-  ],
-  tendenciasTemas: [
-    {
-      tema: String,
-      frecuencia: Number,
+    fortalezasLLM: [
+      {
+        type: String,
+      },
+    ],
+    areasMejoraLLM: [
+      {
+        type: String,
+      },
+    ],
+    recomendacionesLLM: [
+      {
+        type: String,
+      },
+    ],
+    fechaGeneracion: {
+      type: Date,
+      default: null,
     },
-  ],
+    parametrosUsados: {
+      maxFortalezas: {
+        type: Number,
+        default: 3,
+      },
+      maxAreasMejora: {
+        type: Number,
+        default: 3,
+      },
+      maxRecomendaciones: {
+        type: Number,
+        default: 3,
+      },
+    },
+    comentariosAnalizados: {
+      type: Number,
+      default: 0,
+    },
+    versionModelo: {
+      type: String,
+      default: "llama3.2",
+    },
+  },
 })
 
 module.exports = mongoose.model("AnalisisProfesor", analisisProfesorSchema)

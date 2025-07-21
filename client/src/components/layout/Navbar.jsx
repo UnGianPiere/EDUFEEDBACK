@@ -131,12 +131,22 @@ const Navbar = () => {
           </Link>
           {authChecked && user && user.rol === "admin" && (
             <Link
-              to="/informes"
+              to="/panel-admin"
               className={`flex items-center gap-1 ${
-                location.pathname === "/informes" ? "text-blue-600" : "text-gray-700"
+                location.pathname === "/panel-admin" ? "text-blue-600" : "text-gray-700"
               }`}
             >
-              <span>Informes</span>
+              <span>Panel de Administración</span>
+            </Link>
+          )}
+          {authChecked && user && user.rol === "admin" && (
+            <Link
+              to="/control-docente-admin"
+              className={`flex items-center gap-1 ${
+                location.pathname === "/control-docente-admin" ? "text-indigo-600" : "text-gray-700"
+              }`}
+            >
+              <span>Control Docente Admin</span>
             </Link>
           )}
 
@@ -268,11 +278,20 @@ const Navbar = () => {
             </Link>
             {authChecked && user && user.rol === "admin" && (
               <Link
-                to="/informes"
-                className={`block py-2 ${location.pathname === "/informes" ? "text-blue-600" : "text-gray-700"}`}
+                to="/panel-admin"
+                className={`block py-2 ${location.pathname === "/panel-admin" ? "text-blue-600" : "text-gray-700"}`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Informes
+                Panel de Administración
+              </Link>
+            )}
+            {authChecked && user && user.rol === "admin" && (
+              <Link
+                to="/control-docente-admin"
+                className={`block py-2 ${location.pathname === "/control-docente-admin" ? "text-indigo-600" : "text-gray-700"}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Control Docente Admin
               </Link>
             )}
 

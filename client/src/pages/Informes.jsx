@@ -40,6 +40,16 @@ const Informes = () => {
     biografia: "",
   })
 
+  const [controlDocenteData, setControlDocenteData] = useState(null)
+  const [selectedProfesorAnalisis, setSelectedProfesorAnalisis] = useState(null)
+  const [filtros, setFiltros] = useState({
+    departamento: "",
+    curso: "",
+    periodo: "2025-1",
+    busqueda: "",
+  })
+  const [profesoresParaAnalisis, setProfesoresParaAnalisis] = useState([])
+
   useEffect(() => {
     // Verificar que el usuario sea administrador
     if (authChecked) {
@@ -108,6 +118,21 @@ const Informes = () => {
     // Mostrar cursos cuyo departamento sea el seleccionado o "General"
     setCursosFiltrados(cursos.filter((c) => c.departamento === nombreDepto || c.departamento === "General"))
   }, [profesorForm.departamento, cursos, departamentos])
+
+  useEffect(() => {
+    if (activeTab === "control-docente") {
+      console.log("=== USEEFFECT CONTROL DOCENTE ===")
+      console.log("Tab activo:", activeTab)
+      console.log("Filtros:", filtros)
+
+      // Agregar un pequeño delay para evitar múltiples llamadas
+      const timeoutId = setTimeout(() => {
+        fetchControlDocenteData()
+      }, 300)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [activeTab, filtros.departamento, filtros.curso, filtros.periodo, filtros.busqueda])
 
   const fetchEstadisticas = async () => {
     try {
@@ -305,6 +330,101 @@ const Informes = () => {
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  const fetchControlDocenteData = async () => {
+    try {
+      console.log("=== FETCH CONTROL DOCENTE ===")
+      console.log("Filtros actuales:", filtros)
+
+      setLoading(true)
+
+      // Primero cargar departamentos y cursos si no están cargados
+      if (departamentos.length === 0) {
+        console.log("Cargando departamentos...")
+        await fetchDepartamentos()
+      }
+      if (cursos.length === 0) {
+        console.log("Cargando cursos...")
+        const cursosRes = await axios.get("/api/cursos")
+        setCursos(cursosRes.data)
+      }
+
+      console.log("Haciendo request a control-docente con params:", filtros)
+      const res = await axios.get("/api/informes/control-docente", {
+        params: filtros,
+      })
+
+      console.log("Response recibida:", res.data)
+      setProfesoresParaAnalisis(res.data.profesores)
+
+      // Si hay profesores y no hay uno seleccionado, seleccionar el primero
+      if (res.data.profesores.length > 0) {
+        if (!selectedProfesorAnalisis) {
+          const primerProfesor = res.data.profesores[0]
+          console.log("Seleccionando primer profesor:", primerProfesor.nombre)
+          setSelectedProfesorAnalisis(primerProfesor)
+          await fetchProfesorAnalisisDetallado(primerProfesor._id)
+        }
+      } else {
+        console.log("No se encontraron profesores")
+        setSelectedProfesorAnalisis(null)
+        setControlDocenteData(null)
+      }
+
+      setLoading(false)
+    } catch (error) {
+      console.error("=== ERROR FETCH CONTROL DOCENTE ===")
+      console.error("Error completo:", error)
+      console.error("Response data:", error.response?.data)
+      toast.error(`Error al cargar datos de control docente: ${error.response?.data?.message || error.message}`)
+      setLoading(false)
+    }
+  }
+
+  const fetchProfesorAnalisisDetallado = async (profesorId) => {
+    try {
+      console.log("=== FETCH ANÁLISIS DETALLADO ===")
+      console.log("ID del profesor:", profesorId)
+
+      const res = await axios.get(`/api/informes/profesor-analisis/${profesorId}`)
+      console.log("Análisis recibido:", res.data)
+      setControlDocenteData(res.data)
+    } catch (error) {
+      console.error("=== ERROR ANÁLISIS DETALLADO ===")
+      console.error("Error completo:", error)
+      console.error("Response data:", error.response?.data)
+      toast.error(`Error al cargar análisis detallado: ${error.response?.data?.message || error.message}`)
+    }
+  }
+
+  const handleFiltroChange = (campo, valor) => {
+    console.log(`=== CAMBIO DE FILTRO ===`)
+    console.log(`Campo: ${campo}, Valor: ${valor}`)
+
+    setFiltros((prev) => {
+      const newFiltros = { ...prev, [campo]: valor }
+
+      // Si cambia el departamento, resetear el curso
+      if (campo === "departamento") {
+        newFiltros.curso = ""
+        console.log("Reseteando curso por cambio de departamento")
+      }
+
+      console.log("Nuevos filtros:", newFiltros)
+      return newFiltros
+    })
+
+    // Resetear profesor seleccionado cuando cambian los filtros
+    setSelectedProfesorAnalisis(null)
+    setControlDocenteData(null)
+  }
+
+  const handleProfesorSelect = (profesor) => {
+    setSelectedProfesorAnalisis(profesor)
+    if (profesor) {
+      fetchProfesorAnalisisDetallado(profesor._id)
+    }
+  }
+
   if (loading && !stats) {
     return <div className="text-center py-10">Cargando...</div>
   }
@@ -367,6 +487,19 @@ const Informes = () => {
               >
                 <Users className="w-5 h-5 inline-block mr-1" />
                 Profesores
+              </button>
+            </li>
+            <li className="mr-2">
+              <button
+                className={`inline-block p-4 ${
+                  activeTab === "control-docente"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => setActiveTab("control-docente")}
+              >
+                <BarChart2 className="w-5 h-5 inline-block mr-1" />
+                Control Docente
               </button>
             </li>
           </ul>
@@ -1206,6 +1339,10 @@ const Informes = () => {
             )}
           </div>
         )}
+
+        {/* Control Docente */}
+        {/* BLOQUE ELIMINADO: Todo el dashboard y análisis de control docente ahora está en ControlDocenteAdmin.jsx */}
+
       </div>
 
       {/* Footer */}
