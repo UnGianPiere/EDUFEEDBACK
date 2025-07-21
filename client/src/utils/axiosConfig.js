@@ -3,7 +3,7 @@ import toast from "react-hot-toast"
 
 // Crear instancia de axios con URL base
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

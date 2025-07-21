@@ -23,15 +23,8 @@ const cursoRoutes = require("./routes/cursoRoutes")
 
 const app = express()
 
-// Solo usar CORS en desarrollo
-if (process.env.NODE_ENV !== "production") {
-  app.use(
-    cors({
-      origin: ["http://localhost:3000"],
-      credentials: true,
-    })
-  )
-}
+// Permitir CORS desde todos los orígenes (público)
+app.use(cors()) // <-- habilita acceso desde cualquier origen
 
 app.use(express.json({ limit: "10mb" }))
 app.use(express.urlencoded({ extended: false, limit: "10mb" }))

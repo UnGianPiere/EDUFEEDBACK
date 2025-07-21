@@ -16,14 +16,17 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false,
-    minify: true,
-    cssMinify: true,
+    sourcemap: true,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: undefined
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000
   },
-  base: './'
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'axios']
+  },
+  base: '/'
 })

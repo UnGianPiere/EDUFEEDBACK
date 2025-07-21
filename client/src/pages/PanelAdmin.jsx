@@ -26,7 +26,14 @@ const PanelAdmin = () => {
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(true)
-    const [stats, setStats] = useState(null)
+    const [stats, setStats] = useState({
+        profesores: {
+            mejorCalificados: [],
+            masComentados: []
+        },
+        usuariosMasActivos: [],
+        comentariosRecientes: []
+    })
     const [activeTab, setActiveTab] = useState("dashboard")
     const [usuarios, setUsuarios] = useState([])
     const [comentarios, setComentarios] = useState([])
@@ -140,7 +147,18 @@ const PanelAdmin = () => {
         try {
             setLoading(true)
             const res = await axiosInstance.get("/api/informes/estadisticas")
-            setStats(res.data)
+            // Asegurarse de que todas las propiedades que usarán .map sean arrays
+            const data = {
+                ...res.data,
+                profesores: {
+                    ...res.data.profesores,
+                    mejorCalificados: Array.isArray(res.data.profesores?.mejorCalificados) ? res.data.profesores.mejorCalificados : [],
+                    masComentados: Array.isArray(res.data.profesores?.masComentados) ? res.data.profesores.masComentados : []
+                },
+                usuariosMasActivos: Array.isArray(res.data.usuariosMasActivos) ? res.data.usuariosMasActivos : [],
+                comentariosRecientes: Array.isArray(res.data.comentariosRecientes) ? res.data.comentariosRecientes : []
+            }
+            setStats(data)
             setLoading(false)
         } catch (error) {
             console.error("Error al cargar estadísticas:", error)
@@ -416,11 +434,9 @@ const PanelAdmin = () => {
         ]
     }
 
-    if (loading && !stats) {
-        return <div className="text-center py-10">Cargando...</div>
-    }
-
-    return (
+  if (loading || !stats || !stats.profesores) {
+    return <div className="text-center py-10">Cargando...</div>
+  }    return (
         <div className="max-w-7xl mx-auto">
             <div className="border rounded-lg p-6 mb-6">
                 <h1 className="text-2xl font-bold mb-6">Panel de Administración</h1>
@@ -579,7 +595,7 @@ const PanelAdmin = () => {
                                 </div>
                                 <div className="text-sm">
                                     <p className="mb-1">Top profesores por calificación:</p>
-                                    {stats.profesores.mejorCalificados.slice(0, 3).map((profesor, index) => (
+                                    {stats?.profesores?.mejorCalificados?.slice(0, 3)?.map((profesor, index) => (
                                         <div key={profesor._id} className="flex justify-between items-center mb-1">
                                             <span>
                                                 {index + 1}. {profesor.nombre}
@@ -595,7 +611,7 @@ const PanelAdmin = () => {
                             <div className="border rounded-lg p-6">
                                 <h3 className="text-lg font-medium mb-4">Profesores Más Comentados</h3>
                                 <div className="space-y-4">
-                                    {stats.profesores.masComentados.map((profesor) => (
+                                    {stats?.profesores?.masComentados?.map((profesor) => (
                                         <div key={profesor._id} className="flex justify-between items-center">
                                             <div>
                                                 <div className="font-medium">{profesor.nombre}</div>
@@ -614,7 +630,7 @@ const PanelAdmin = () => {
                                 <h3 className="text-lg font-medium mb-4">Usuarios Más Activos</h3>
                                 <div className="space-y-4">
                                     {stats.usuariosMasActivos && stats.usuariosMasActivos.length > 0 ? (
-                                        stats.usuariosMasActivos.map((usuario, index) => (
+                                        stats?.usuariosMasActivos?.map((usuario, index) => (
                                             <div key={index} className="flex justify-between items-center">
                                                 <div>
                                                     <div className="font-medium">{usuario.nombreUsuario || "Usuario sin nombre"}</div>
@@ -635,7 +651,7 @@ const PanelAdmin = () => {
                         <div className="border rounded-lg p-6">
                             <h3 className="text-lg font-medium mb-4">Comentarios Recientes</h3>
                             <div className="space-y-4">
-                                {stats.comentariosRecientes.map((comentario) => (
+                                {stats?.comentariosRecientes?.map((comentario) => (
                                     <div key={comentario._id} className="border-b pb-4 last:border-b-0 last:pb-0">
                                         <div className="flex justify-between items-start mb-2">
                                             <div>
