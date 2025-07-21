@@ -15,14 +15,15 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: false,
+    minify: true,
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: undefined
       }
     }
   },
-  base: '/'
+  base: './'
 })
